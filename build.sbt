@@ -34,7 +34,7 @@ lazy val server = (project in file("server")).settings(
     specs2 % Test
   ),
   // Heroku specific
-  herokuAppName in Compile := "cedar-14",
+  herokuAppName in Compile := "still-headland-8667",
   herokuSkipSubProjects in Compile := false
 ).enablePlugins(PlayScala).
   aggregate(clients.map(projectToRef): _*).
@@ -45,7 +45,9 @@ lazy val client = (project in file("client")).settings(
   persistLauncher := true,
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.0"
+    "org.scala-js" %%% "scalajs-dom" % "0.8.0",
+    "com.lihaoyi" %%% "scalarx" % "0.2.8",
+    "fr.iscpif" %%% "scaladget" % "0.7.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
   dependsOn(sharedJs)
