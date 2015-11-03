@@ -3,6 +3,7 @@ package org.ababup1192
 import java.util.UUID
 
 import fr.iscpif.scaladget.d3._
+import org.scalajs.dom
 import rx._
 
 import scala.scalajs.js
@@ -35,12 +36,25 @@ object ScalaJSMain extends js.JSApp {
   val tasks: Var[Array[Var[Task]]] = Var(Array())
   val dragging = Var(false)
   val mouseDownTask: Var[Option[Task]] = Var(None)
+  val keyCodeV = Var(-1d)
 
   def main(): Unit = {
 
     val svgElement = js.Dynamic.global.document.getElementById("workflow")
 
     def mouseXY = d3.mouse(svgElement)
+
+
+    d3.select(dom.window)
+      .on("keydown", (_: js.Any, _: Double) => {
+        keyCodeV() = d3.event.keyCode
+      })
+
+    d3.select(dom.window)
+      .on("keyup", (_: js.Any, _: Double) => {
+        keyCodeV() = -1d
+      })
+
 
     def mouseMove(): Unit = {
       Seq(mouseDownTask()).flatten.foreach { t ⇒
@@ -55,7 +69,7 @@ object ScalaJSMain extends js.JSApp {
     def mouseUp(): Unit = {
       // Hide the drag line
       val xy = mouseXY
-      if (!dragging()) {
+      if (!dragging() && keyCodeV() == 16) {
         val (x, y) = (xy(0), xy(1))
         val id = UUID.randomUUID()
         addTask(id.toString, id.toString, x, y)
@@ -67,6 +81,8 @@ object ScalaJSMain extends js.JSApp {
     svg
       .on("mousemove", (_: js.Any, _: Double) => mouseMove())
       .on("mouseup.scene", (_: js.Any, _: Double) ⇒ mouseUp())
+
+
   }
 
   def addTask(id: String, title: String, x: Double, y: Double): Unit =
